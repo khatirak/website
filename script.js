@@ -25,13 +25,13 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   
-    // Form submission handling with validation
+    // Form validation (now works alongside FormSubmit)
     const contactForm = document.getElementById('contactForm');
     if (contactForm) {
       contactForm.addEventListener('submit', function(e) {
-        e.preventDefault();
+        // Don't prevent default - let the form submit to FormSubmit
+        // But still do client-side validation
         
-        // Basic form validation
         const name = document.getElementById('name');
         const email = document.getElementById('email');
         const message = document.getElementById('message');
@@ -60,12 +60,22 @@ document.addEventListener('DOMContentLoaded', () => {
           removeError(message);
         }
         
-        if (isValid) {
-          // Form is valid, proceed with submission
-          // For demo, we'll just show a success message
-          showFormSuccess();
-          contactForm.reset();
+        if (!isValid) {
+          e.preventDefault(); // Only prevent form submission if validation fails
+          return false;
         }
+        
+        // If we get here, the form will submit to FormSubmit service
+        // Add a small delay to show form being submitted
+        const submitButton = contactForm.querySelector('.submit-button');
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+        submitButton.disabled = true;
+        
+        // This just adds a nice UX touch - FormSubmit will handle the actual submission
+        setTimeout(() => {
+          submitButton.innerHTML = 'Send Message';
+          submitButton.disabled = false;
+        }, 1000);
       });
     }
   
@@ -83,24 +93,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function isValidEmail(email) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return emailRegex.test(email);
-    }
-  
-    function showFormSuccess() {
-      const formContainer = contactForm.parentElement;
-      const successMsg = document.createElement('div');
-      successMsg.className = 'success-message';
-      successMsg.innerHTML = `
-        <div style="padding: 20px; background-color: rgba(87, 110, 145, 0.1); border-radius: 4px; margin-top: 20px; text-align: center;">
-          <h3 style="color: #273454; margin-bottom: 10px;">Message Sent!</h3>
-          <p>Thank you for reaching out. I'll get back to you soon.</p>
-        </div>
-      `;
-      
-      formContainer.appendChild(successMsg);
-      
-      setTimeout(() => {
-        successMsg.remove();
-      }, 5000);
     }
   
     // Add active class to nav links on scroll
@@ -156,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
     // Add subtle animations for page elements
     function animateOnScroll() {
-      const elements = document.querySelectorAll('.project-card, .experience-card, .education-card');
+      const elements = document.querySelectorAll('.project-card, .experience-card, .education-card, .activity-card, .skills-category');
       
       elements.forEach(element => {
         const elementTop = element.getBoundingClientRect().top;
@@ -171,13 +163,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Add CSS for fade-in animation
     const style = document.createElement('style');
     style.textContent = `
-      .project-card, .experience-card, .education-card {
+      .project-card, .experience-card, .education-card, .activity-card, .skills-category {
         opacity: 0;
         transform: translateY(20px);
         transition: opacity 0.6s ease, transform 0.6s ease;
       }
       
-      .project-card.visible, .experience-card.visible, .education-card.visible {
+      .project-card.visible, .experience-card.visible, .education-card.visible, .activity-card.visible, .skills-category.visible {
         opacity: 1;
         transform: translateY(0);
       }
