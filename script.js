@@ -179,4 +179,42 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('scroll', animateOnScroll);
     // Initial check for elements in view
     animateOnScroll();
+    
+    // Typewriter effect for hero text
+    const typewriterElement = document.getElementById('typewriter-text');
+    if (typewriterElement) {
+      const fullText = typewriterElement.textContent;
+      typewriterElement.textContent = '';
+      typewriterElement.style.opacity = '1';
+      
+      const words = fullText.split(' ');
+      let wordIndex = 0;
+      
+      function typeWriter() {
+        if (wordIndex < words.length) {
+          // Add the current word
+          if (wordIndex > 0) {
+            typewriterElement.textContent += ' ';
+          }
+          typewriterElement.textContent += words[wordIndex];
+          wordIndex++;
+          
+          // Set delay between words (adjust timing as needed)
+          setTimeout(typeWriter, 150); // 150ms delay between words
+        }
+      }
+      
+      // Start the typewriter effect after a short delay
+      setTimeout(() => {
+        typeWriter();
+      }, 500);
+    }
+    
+    // Flip card functionality for interests page
+    const flipCards = document.querySelectorAll('.flip-card');
+    flipCards.forEach(card => {
+      card.addEventListener('click', function() {
+        this.classList.toggle('flipped');
+      });
+    });
   });
